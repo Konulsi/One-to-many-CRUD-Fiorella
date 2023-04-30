@@ -12,187 +12,6 @@ using System.Text.RegularExpressions;
 
 namespace EntityFramework_Slider.Areas.Admin.Controllers
 {
-    //[Area("Admin")]
-    //public class ProductController : Controller
-    //{
-    //    private readonly IProductService _productService;
-    //    private readonly ICategoryService _categoryService;
-    //    private readonly IWebHostEnvironment _env;
-    //    private readonly AppDbContext _context;
-
-    //    public ProductController(IProductService productService,
-    //                            ICategoryService categoryService,
-    //                            IWebHostEnvironment env,
-    //                            AppDbContext context)
-    //    {
-    //        _productService = productService;
-    //        _categoryService = categoryService;
-    //        _env = env;
-    //        _context = context;
-    //    }
-
-    //    public async Task<IActionResult> Index(int page = 1 , int take = 4) //page yeni hansi sehifededi, take yeni neche dene product gosterecek
-    //    {
-    //        List<Product> products = await _productService.GetPaginatedDatas(page, take); //databazada olan butun productlari gotururuk
-
-    //        List<ProductListVM> mappeddatas = GetMappedDatas(products);   // elimizde olan databazadan goturduyumuz productlari birlewdririk viewmodele gonderirik viewa
-
-    //        int pageCount = await GetPageCountAsync(take);
-
-    //        Paginate<ProductListVM> paginatedDatas = new(mappeddatas, page, pageCount);
-    //                                                     //mappeddata-productlarimizin listesidi(fora salib wekili falan gosterdiklerimiz)
-    //        ViewBag.take = take;                        //pageCount- ne qeder page count varsa onlardi
-    //                                                   //page -de hal hazirda hansi sehifedeyikse odur
-    //        return View(paginatedDatas);
-    //    }
-
-
-    //    private async Task<int> GetPageCountAsync(int take) //sehifedeki pagelerin sayini tapmaq uchun method
-    //    {
-    //        var productCount = await _productService.GetCountAsync();   //productServicenin ichindeki method vasitesile productlarin sayini elde edirik
-
-    //        return (int)Math.Ceiling((decimal)(productCount / take)); //productlarin sayini take e(yeni her sehifede neche product olacaq) boluruk ki  neche eded sehife oldugunu tapa bilek
-    //        // burada metodun typena gore int-e cast edirik. math.cellingin ichinde ise neticeni decimala cast edirik. chunki math decimal tipi teleb edir.
-    //        //math.celing i ona gore ist edirikki productcount u take e boldukde qaliq qalirsa yuvarlawdirsin deye
-    //    }
-
-
-
-    //    private List<ProductListVM> GetMappedDatas(List<Product> products) //bir modelin ichindekileri bir bawqa  modelin ichindekilere beraberlewdirmek datalari mapp etmek adlanir
-    //    {
-    //        List<ProductListVM> mappedDatas = new(); // viewmodelden instans aliriq.
-    //        // var olan databazadki productlari goturub secvirmeliyik viewmodele gondermeliyik view-a
-    //        foreach (var product in products)  //databazadan goturduyumuz productlari fora saliriq. ichinde bir productun propertilerini viewmodelin propertilerine beraberlewdiririk
-    //        {
-    //            ProductListVM productVM = new()   // list<ProductListVm> den birininin prorpertilerini beraberlewdiririk databazadan gelen productun proplarina
-    //            {
-    //                Id = product.Id,
-    //                Name = product.Name,
-    //                Description = product.Description,
-    //                CategoryName = product.Category.Name,
-    //                Count = product.Count,
-    //                Price = product.Price,
-    //                MainImage = product.Images.Where(m => m.IsMain).FirstOrDefault()?.Image
-    //            };
-
-    //            mappedDatas.Add(productVM);  //List<ProductVM e add edirik elimzde olan beraberlewdririklerimizi>
-    //        }
-
-    //        return mappedDatas;  
-
-    //    }
-
-
-
-    //    [HttpGet]
-    //    public async Task<IActionResult> Create()
-    //    {
-    //        ViewBag.categories = await GetCategoriesAsync();
-
-    //        return View();
-    //    }
-
-
-
-    //    [HttpPost]
-    //    [ValidateAntiForgeryToken]
-    //    public async Task<IActionResult> Create(ProductCreateVM model)
-    //    {
-    //        try
-    //        {
-    //            ViewBag.categories = await GetCategoriesAsync();
-
-    //            if (!ModelState.IsValid)
-    //            {
-    //                return View(model);
-    //            }
-
-    //            foreach (var photo in model.Photos)
-    //            {
-    //                if (!photo.CheckFileType("image/")) 
-    //                {
-    //                    ModelState.AddModelError("Photo", "File type must be image");
-    //                    return View();
-    //                }
-
-    //                if (!photo.CheckFileSize(200)) 
-    //                {
-    //                    ModelState.AddModelError("Photo", "Image size must be max 200kb");
-    //                    return View();
-    //                }
-    //            }
-
-    //            //productla productImageler oneToMany-dir.productun ichinde imageler var. ilk once imageden instans yaradib imageleri yigmaliyiq(vhunki productImage ayri tabledir),
-    //            //sonra productlari yaradib, productun ichinde olan image listini birinci instan alib yaratdigimiz productImagelerimize beraberlewdireceyik...
-
-    //            //1ci productImageleri list formasinda yaradiriq 
-    //            List<ProductImage> productImages= new ();
-
-
-    //            foreach (var photo in model.Photos)
-    //            {
-    //                string fileName = Guid.NewGuid().ToString() + "_" + photo.FileName;  
-
-    //                string path = FileHelper.GetFilePath(_env.WebRootPath, "img", fileName);  
-
-    //                await FileHelper.SaveFileAsync(path, photo);
-
-    //                //productImage den instans yaradiriq
-    //                ProductImage productImage = new()
-    //                {
-    //                    Image = fileName  //productImage-in ichindeki image i beraber edirik yaratdigimiz fileName e
-    //                };  
-
-    //                productImages.Add(productImage);  // productImages listimize add edirik productImage e(yeni liste tek bir productImage i elave edirik)
-    //            }
-
-    //            productImages.FirstOrDefault().IsMain = true; // yeni productun imagelerinden birini true etmekmuchun
-
-
-    //            Product newProduct = new()  //product dan instans aliriqki yeni productda yaradaq
-    //            {
-    //                Name = model.Name,   //name beraber olur gelen modelin name-ne
-    //                Price = model.Price,   //price beraber olur gelen modelin price-ne
-    //                Count = model.Count,
-    //                Description = model.Description,   //desc beraber olur gelen modelin desc-ne
-    //                CategoryId = model.CategoryId,    //modelimizin ichinde olan categoryId beraber olur gelen modelin categId-ne
-    //                Images = productImages,   // product modelimizde olan image list weklindedir deye for salmaq olmur. buna gore yuxarida productImageden list yaradib instans alib, ichini doldururuq. yaratdigimiz productImage listini beraber edirik productun ichinde olan Image listimize
-    //            };
-
-    //            await _context.ProductImages.AddRangeAsync(productImages); //Listi listin ichine qoymaq uchun addRange methodundan ist edirik
-    //            //yaratdigimiz productImageleri(list weklinde bir neche dene ola biler) elave edirik db-da olan productImages tablesine
-
-    //            await _context.Products.AddAsync(newProduct);
-    //            //yaratdigimiz yeni productu elave edirik db-da olan products tablesinin ichine
-
-    //            await _context.SaveChangesAsync();  
-
-
-    //            return RedirectToAction(nameof(Index));
-    //        }
-    //        catch (Exception)
-    //        {
-
-    //            throw;
-    //        }
-
-
-    //    }
-
-
-
-    //    private async Task<SelectList> GetCategoriesAsync()
-    //    {
-    //        IEnumerable<Category> categories = await _categoryService.GetAll();
-
-    //        return  new SelectList(categories, "Id", "Name"); // bu o demekdirki select listin ichine categoriyalari yigiriq,  id ve name i gotururuk. id gedir valuesine, name gedir selectin textine
-    //        // name ne gore categorylerin id sini gotururuk
-
-    //    }
-    //}
-
-
-
 
     [Area("Admin")]
     public class ProductController : Controller
@@ -210,19 +29,19 @@ namespace EntityFramework_Slider.Areas.Admin.Controllers
             _env = env;
             _context = context;
         }
-        public async Task<IActionResult> Index(int page = 1, int take = 4) //page-hansi seyfededi hecne gondermesek Default 1-ci seyfeni goturur ama gelirse hemin reqemin seyfesin goturur,take-necedene gotursun data
+        public async Task<IActionResult> Index(int page = 1, int take = 4) //page-hansi seyfededi hecne gondermesek Default 1-ci seyfeni goturur ama gelirse hemin reqemin seyfesin goturur //page yeni hansi sehifededi, take yeni neche dene product gosterecek
         {
-            List<Product> products = await _productService.GetPaginatedDatas(page, take);  //databzadaki butun produktlar
+            List<Product> products = await _productService.GetPaginatedDatas(page, take);  //databazada olan butun productlari gotururuk
 
-            List<ProductListVM> mappedDatas = GetMappedDatas(products);  //VM -nen gonderik datanin lazimsiz propertileri getmesin deye          
+            List<ProductListVM> mappedDatas = GetMappedDatas(products);  //VM -nen gonderik datanin lazimsiz propertileri getmesin deye   // elimizde olan databazadan goturduyumuz productlari birlewdririk viewmodele gonderirik viewa       
 
             int pageCount = await GetPageCountAsync(take); //method seyfedeki pagination sayini tapmaq ucun
 
             ViewBag.take = take;
 
-            Paginate<ProductListVM> paginaDatas = new(mappedDatas, page, pageCount);//paginate- gonderirik secilmis propertili datalari=datas,
-                                                                                    //page=hansi seyfedeyik,
-                                                                                    //pagecountu=paginatlari siralamaq ucun fora salib
+            Paginate<ProductListVM> paginaDatas = new(mappedDatas, page, pageCount);  //mappeddata-productlarimizin listesidi(fora salib wekili falan gosterdiklerimiz)
+                                                                                      //pageCount- ne qeder page count varsa onlardi
+                                                                                      //page -de hal hazirda hansi sehifedeyikse odur
 
             return View(paginaDatas);
 
@@ -230,13 +49,17 @@ namespace EntityFramework_Slider.Areas.Admin.Controllers
 
 
 
-        private List<ProductListVM> GetMappedDatas(List<Product> products)
+        private List<ProductListVM> GetMappedDatas(List<Product> products)   //bir modelin ichindekileri bir bawqa  modelin ichindekilere beraberlewdirmek datalari mapp etmek adlanir
         {
-            List<ProductListVM> mappedDatas = new(); //bir clasi istifade etmek ucun instans almaq lazimdi
-            foreach (var product in products)
+            List<ProductListVM> mappedDatas = new();     // viewmodelden instans aliriq.
+                                                         // var olan databazadki productlari goturub chevirmeliyik viewmodele gondermeliyik view-a
+          
+            foreach (var product in products)            //databazadan goturduyumuz productlari fora saliriq. ichinde bir productun propertilerini viewmodelin propertilerine beraberlewdiririk
             {
-                ProductListVM productVM = new()   //her VM bir product(VM propertisini beraber edirik productun bize lazim olan propertilerine)
+                ProductListVM productVM = new()         //her VM bir product(VM propertisini beraber edirik productun bize lazim olan propertilerine)
                 {
+                                                         // list<ProductListVm> den birininin prorpertilerini beraberlewdiririk databazadan gelen productun proplarina
+
                     Id = product.Id,
                     Name = product.Name,
                     Description = product.Description,
@@ -246,15 +69,15 @@ namespace EntityFramework_Slider.Areas.Admin.Controllers
                     MainImage = product.Images.Where(m => m.IsMain).FirstOrDefault()?.Image
 
                 };
-                mappedDatas.Add(productVM); //sonra VM-leri yani her producti yiqiriq Liste
+                mappedDatas.Add(productVM);               //sonra VM-leri yani her producti yiqiriq Liste //List<ProductVM e add edirik elimzde olan beraberlewdririklerimizi>
             }
             return mappedDatas;
         }  //method mapped-yani beraberlesdirilmis-VM modele beraberlesdiririk databazadaki productun propertilerini.
            //bu method bize lazimdiki butun propertileri gondermemek ucun viewa ancaq lazim olanlari!
 
-        private async Task<int> GetPageCountAsync(int take)  //method seyfedeki pagination sayini tapmaq ucun
+        private async Task<int> GetPageCountAsync(int take) //sehifedeki pagelerin sayini tapmaq uchun method
         {
-            var productCount = await _productService.GetCountAsync();  //productlari cem sayi
+            var productCount = await _productService.GetCountAsync();  //productlari cem sayi  //productServicenin ichindeki method vasitesile productlarin sayini elde edirik
 
             return (int)Math.Ceiling((decimal)productCount / take);  //productlari cem sayi boluruk gotureceymiz product sayina(her seyfede nece olsun product sayina)
                                                                      //Math.Ceeling-istifade edirik yuvarlasdirmaq. meselen(product 5 / page 2)-bize 3 versin deye
@@ -303,6 +126,11 @@ namespace EntityFramework_Slider.Areas.Admin.Controllers
                     //}
                 }
 
+
+                //productla productImageler oneToMany-dir.productun ichinde imageler var. ilk once imageden instans yaradib imageleri yigmaliyiq(vhunki productImage ayri tabledir),
+                //sonra productlari yaradib, productun ichinde olan image listini birinci instan alib yaratdigimiz productImagelerimize beraberlewdireceyik...
+
+                //1ci productImageleri list formasinda yaradiriq 
                 List<ProductImage> productImages = new();  //bir productun bir nece sekli olar deye Sekiler tipinden Liste yiq
                 foreach (var photo in model.Photos)  //her gelen seklilleri foreacha sal
                 {
@@ -311,31 +139,35 @@ namespace EntityFramework_Slider.Areas.Admin.Controllers
                     string newPath = FileHelper.GetFilePath(_env.WebRootPath, "img", fileName);
                     await FileHelper.SaveFileAsync(newPath, photo); //her gelen sekli save ele projecte
 
+                    //productImage den instans yaradiriq
                     ProductImage newProductImage = new()
                     {
-                        Image = fileName  // //her sekli beraber ele databazadaki Image tablin propertisine
+                        Image = fileName  //productImage-in ichindeki image i beraber edirik yaratdigimiz fileName e  //her sekli beraber ele databazadaki Image tablin propertisine
                     };
-                    productImages.Add(newProductImage); //her productu beraber eleyende sonr propertiye yiq Liste
+                    productImages.Add(newProductImage);  // productImages listimize add edirik productImage e(yeni liste tek bir productImage i elave edirik)  //her productu beraber eleyende sonr propertiye yiq Liste
 
                 }
 
-                productImages.FirstOrDefault().IsMain = true; //yeni yuklediyimiz sekilerden biri ismaini true olsunki ekranda gorsensin
+                productImages.FirstOrDefault().IsMain = true;  //yeni yuklediyimiz sekilerden biri ismaini true olsunki ekranda gorsensin
                 decimal convertedPrice = decimal.Parse(model.Price);  //databazada decimaldi deye price decimal kimi gonderik.ve viewdan bize string gelir deye price, onu decimala parse edirik ve noqteni vergule deyisirik(deyismesek bize ancaq butov eded verecek qaliq yox)
                 //viewmodelde type string yazdiq deye rplace edib noqteni vergule chevire bilirik.
                 //noqteni vergule deyiwenden sonra hemin stringi decimala cast edirik.
 
-                Product product = new()
+
+                Product newProduct = new()  //product dan instans aliriqki yeni productda yaradaq
                 {
-                    Name = model.Name, //iputdan gelir
-                    Price = convertedPrice, //price inputdan gelir
-                    Count = model.Count, //count inputdan gelir
-                    Description = model.Description, //description inputdan gelir
-                    CategoryId = model.CategoryId,  //categori Id-si gelir select-inputdan
-                    Images = productImages   //ve Image Listi gelir controllerden (viewdan gebul edib Liste yiqiriq controllerde)
+                    Name = model.Name,   //name beraber olur gelen modelin name-ne
+                    Price = convertedPrice,   //price beraber olur gelen modelin price-ne
+                    Count = model.Count,
+                    Description = model.Description,   //desc beraber olur gelen modelin desc-ne
+                    CategoryId = model.CategoryId,    //modelimizin ichinde olan categoryId beraber olur gelen modelin categId-ne
+                    Images = productImages,   // product modelimizde olan image list weklindedir deye for salmaq olmur. buna gore yuxarida productImageden list yaradib instans alib, ichini doldururuq. yaratdigimiz productImage listini beraber edirik productun ichinde olan Image listimize
                 };
 
-                await _context.ProductImages.AddRangeAsync(productImages); //Listin icinde List elave edende Addrange methodun istifade edirik(Product Image Table-Listdi,butun tablar Listdi!)
-                await _context.Products.AddAsync(product);
+                await _context.ProductImages.AddRangeAsync(productImages); //Listi listin ichine qoymaq uchun addRange methodundan ist edirik
+                                                                       //yaratdigimiz productImageleri(list weklinde bir neche dene ola biler) elave edirik db-da olan productImages tablesine
+
+                await _context.Products.AddAsync(newProduct);          //yaratdigimiz yeni productu elave edirik db-da olan products tablesinin ichine
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -345,10 +177,14 @@ namespace EntityFramework_Slider.Areas.Admin.Controllers
             }
 
         }
+
         private async Task<SelectList> GetCategoriesAsync()
         {
             IEnumerable<Category> categories = await _categoryService.GetAll(); //submit olandada categoriler chekbox gorsensin deye burdada cagiririq
+                                                                                // bu o demekdirki select listin ichine categoriyalari yigiriq,  id ve name i gotururuk. id gedir valuesine, name gedir selectin textine
             return new SelectList(categories, "Id", "Name");
+            // name ne gore categorylerin id sini gotururuk
+
         }
 
 
@@ -390,8 +226,8 @@ namespace EntityFramework_Slider.Areas.Admin.Controllers
 
 
 
-        [HttpGet]
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return BadRequest();
@@ -412,6 +248,8 @@ namespace EntityFramework_Slider.Areas.Admin.Controllers
 
             return View(model);
         }
+
+
 
 
         [HttpPost]
